@@ -1,36 +1,55 @@
 <?php
-require "model/CategoriaModel.php";
+
+require 'model/CategoriaModel.php';
 
 class Categoria{
 
-    function __construct() {
-        $this->modelo = new CategoriaModel();
+    function __construct()
+    {
+        $this->model = new CategoriaModel();
     }
 
     function index(){
-        $categorias = $this->modelo->buscarTodo();
-        include "view/template/cabecalho.php";
-        include "view/template/menu.php";
-        include "view/categoria/listagem.php";
-        include "view/template/rodape.php";
+       
+        $categorias = $this->model->buscarTodos();
+        include 'view/template/cabecalho.php';
+        include 'view/template/menu.php';
+        include 'view/categoria/listagem.php';
+        include 'view/template/rodape.php';
     }
-    
 
     function add(){
-        include "view/template/cabecalho.php";
-        include "view/template/menu.php";
-        include "view/categoria/form.php";
-        include "view/template/rodape.php";
+        include 'view/template/cabecalho.php';
+        include 'view/template/menu.php';
+        include 'view/categoria/form.php';
+        include 'view/template/rodape.php';
+    }
+
+    function editar($id){
+        $categoria = $this->model->buscarPorId($id);
+        include 'view/template/cabecalho.php';
+        include 'view/template/menu.php';
+        include 'view/categoria/form.php';
+        include 'view/template/rodape.php';
     }
 
     function excluir($id){
-        echo "excluir categoria";
+        $this->model->excluir($id);
+        header('Location: ?c=categoria');
     }
-}
 
-//$categoria = new CategoriaModel();
-//$categoria->inserir("Produtos de Limpeza");
-//$categoria->excluir(1);
-//$categoria->atualizar(1, "Alvejante");
-//var_dump($categoria->buscarPorId(60));
-//var_dump();
+    function salvar(){
+        if(isset($_POST['categoria']) && !empty($_POST['categoria'])){
+            if(empty($_POST['idcategoria'])){
+            $this->model->inserir($_POST['categoria']);
+        }else{
+            $this->model->atualizar($_POST['idcategoria'], $_POST['categoria']);
+        }
+
+            header('Location: ?c=categoria');
+        }else{
+            echo "Ocorreu um erro, pois os dados não foram enviados";
+        }
+    }
+
+}
